@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:math';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,8 @@ class _RandomWordsState extends State<RandomWords> {
   String _theState = "0";
   int _actualWordType = 0;
   final _random = Random();
+  int _counter = 0;
+  bool buttons = true;
 
   int next(int min, int max) => min + _random.nextInt(max - min);
 
@@ -23,21 +26,42 @@ class _RandomWordsState extends State<RandomWords> {
     setRandomWord();
   }
 
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
   void setRandomWord() {
     var option = next(0, 2);
     var randomItem = "";
     if (option == 0) {
       logInfo("change to noun");
       randomItem = (nouns.toList()..shuffle()).first;
+      logInfo(randomItem);
+      _actualWordType = 0;
     } else {
       logInfo("change to adjective");
       randomItem = (adjectives.toList()..shuffle()).first;
+      logInfo(randomItem);
+      _actualWordType = 1;
     }
   }
 
-  void _onPressed() {}
+  void _onPressed(int valor) {
+    if (valor == _actualWordType) {
+      _incrementCounter();
+      setRandomWord();
+    } else {}
+  }
 
-  void _onReset() {}
+  void _onReset(int val) {
+    if (val == 2) {
+      setState(() {
+        _counter = 0;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,18 +72,20 @@ class _RandomWordsState extends State<RandomWords> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(_theState),
+          Text('$_counter'),
+          Text("$_theState"),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ElevatedButton(
-                  onPressed: () => _onPressed(), child: const Text("Noun")),
+                  onPressed: () => _onPressed(0), child: const Text("Noun")),
               ElevatedButton(
-                  onPressed: () => _onPressed(), child: const Text("Adjective"))
+                  onPressed: () => _onPressed(1),
+                  child: const Text("Adjective"))
             ],
           ),
           ElevatedButton(
-              onPressed: () => _onReset(), child: const Text("Reset")),
+              onPressed: () => _onReset(2), child: const Text("Reset")),
         ],
       ),
     );
